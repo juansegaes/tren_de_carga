@@ -44,7 +44,7 @@ class TaskManagement:
         with open(filename, "w", newline="") as file:
             writer = csv.writer(file)
             writer.writerow(
-                ["Nombre", "Turno", "Día de la Semana", "Personas Necesarias"]
+                ["Nombre", "Turno", "Dia de la Semana", "Personas Necesarias"]
             )
             for task in self.tasks:
                 writer.writerow(task)
