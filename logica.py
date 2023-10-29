@@ -86,7 +86,6 @@ class Day:
         elif self.nombre == "Viernes":
             self.indice = 4
 
-
     def __print__(self):
         print(self.nombre)
         for t in self.tareas_manana:
@@ -132,10 +131,38 @@ class Semana:
         self.reglas = []
         self.Cargar_Reglas()
 
+        for d in self.dias:
+            nteam_manana = 0
+            for t in d.tareas_manana:
+                nteam_manana += t.cant_equipo
+            if nteam_manana > len(self.empleados):
+                raise Exception(
+                    "Hay ",
+                    nteam_manana,
+                    "  turnos el ",
+                    d.nombre,
+                    " en la Manana y ",
+                    len(self.empleados),
+                    " miembros del equipo",
+                )
+            nteam_tarde = 0
+            for t in d.tareas_tarde:
+                nteam_tarde += t.cant_equipo
+            if nteam_tarde > len(self.empleados):
+                raise Exception(
+                    "Hay ",
+                    nteam_tarde,
+                    " turnos el ",
+                    d.nombre,
+                    " en la tarde  y solo ",
+                    len(self.empleados),
+                    " miembros del equipo",
+                )
+
     def Cargar_Empleados(self):
         filename = "employees.csv"
-        filename = os.path.join(os.path.dirname(__file__),"employees.csv")
-        
+        filename = os.path.join(os.path.dirname(__file__), "employees.csv")
+
         try:
             with open(filename, "r") as file:
                 reader = csv.reader(file)
@@ -153,10 +180,8 @@ class Semana:
             print(f"File {filename} not found")
 
     def Cargar_Tareas(self):
-        # raise NotImplementedError("Subclass must implement abstract method"        filename = "tasks.csv"
-
         filename = "tasks.csv"
-        filename = os.path.join(os.path.dirname(__file__),"tasks.csv")
+        filename = os.path.join(os.path.dirname(__file__), "tasks.csv")
         try:
             with open(filename, "r") as file:
                 reader = csv.reader(file)
@@ -218,7 +243,7 @@ class Semana:
 
     def Cargar_Reglas(self):
         filename = "rules.csv"
-        filename = os.path.join(os.path.dirname(__file__),"rules.csv")
+        filename = os.path.join(os.path.dirname(__file__), "rules.csv")
         try:
             with open(filename, "r") as file:
                 reader = csv.reader(file)
@@ -237,16 +262,22 @@ class Semana:
                         else:
                             tmp_cond2 = 0
                         tmp_tarea2 = self.search_tarea_index(row[5])
-                        self.reglas.append(
-                            Regla(
-                                tmp_emp1,
-                                tmp_cond1,
-                                tmp_tarea1,
-                                tmp_emp2,
-                                tmp_cond2,
-                                tmp_tarea2,
+                        if (
+                            tmp_tarea2 != -1
+                            and tmp_tarea1 != -1
+                            and tmp_emp1 != -1
+                            and tmp_emp2 != -1
+                        ):
+                            self.reglas.append(
+                                Regla(
+                                    tmp_emp1,
+                                    tmp_cond1,
+                                    tmp_tarea1,
+                                    tmp_emp2,
+                                    tmp_cond2,
+                                    tmp_tarea2,
+                                )
                             )
-                        )
 
         except FileNotFoundError:
             print("No se encontró el archivo de reglas")
@@ -255,13 +286,13 @@ class Semana:
         for i in range(len(self.tareas)):
             if self.tareas[i].nombre == nombre:
                 return i
-        raise Exception("Tarea no encontrada")
+        return -1
 
     def search_empleado_index(self, nombre):
         for i in range(len(self.empleados)):
             if self.empleados[i].nombre == nombre:
                 return i
-        raise Exception("Empleado no encontrado")
+        return -1
 
     def dif_horarios(
         self,
@@ -302,8 +333,8 @@ class Semana:
         for t in self.tareas:
             t.team = [[], [], [], [], []]
 
-    def revisar_horario(self):
-        if self.dif_horarios() > 2:
+    def revisar_horario(self, n):
+        if self.dif_horarios() > n:
             return False
 
         for reg in self.reglas:
@@ -351,9 +382,19 @@ class Semana:
 
     def organizar(self):
         works = False
-        while not works:
+        count = 1
+        print("Generando Horario")
+        while not works and count < 40000:
             self.intentar_horario()
-            works = self.revisar_horario()
+            works = self.revisar_horario(count // 2000)
+            count += 1
+        if not works:
+            raise Exception(
+                "No es posible encontrar horarios, se intentaron ",
+                count,
+                " combinaciones distintas. Revise que las reglas no se contradigan y que el equipo este completo",
+            )
+        print("Horario encontrado en ", count, "Intentos")
 
     def __print__(self):
         for d in self.dias:

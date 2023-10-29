@@ -4,12 +4,27 @@ import equipo
 import tareas
 import reglas
 import logica
+import sys
+
+
+class TextRedirector:
+    def __init__(self, text_widget, tag):
+        self.text_widget = text_widget
+        self.tag = tag
+
+    def write(self, text):
+        self.text_widget.insert(tk.END, text, (self.tag,))
+        self.text_widget.see(tk.END)
+
+    def flush(self):
+        pass
 
 
 class MainProgram:
     def __init__(self, root):
         self.root = root
         self.create_gui()
+        self.create_console()
 
     def open_team_management(self):
         team_gui = tk.Tk()
@@ -39,7 +54,7 @@ class MainProgram:
 
         # Placeholder for schedule generation logic
         # You can add your schedule generation code here
-        #print("Generating schedule...")
+        # print("Generating schedule...")
 
     def create_gui(self):
         self.team_button = tk.Button(
@@ -84,6 +99,23 @@ class MainProgram:
         )
         big_scroll_x.grid(row=5, column=0, columnspan=5, padx=10, pady=10, sticky="ew")
         self.root.grid_columnconfigure(0, weight=1)
+
+    def create_console(self):
+        console_label = tk.Label(self.root, text="Console Output:")
+        console_label.grid(row=6, column=0, padx=10, pady=10)
+
+        self.console_text = tk.Text(self.root, wrap=tk.WORD, width=60, height=10)
+        self.console_text.grid(row=7, column=0, columnspan=3, padx=10, pady=10)
+
+        # Redirect sys.stdout to update the console text widget
+        sys.stdout = TextRedirector(self.console_text, "stdout")
+
+        # Redirect sys.stderr to update the console text widget
+        sys.stderr = TextRedirector(self.console_text, "stderr")
+
+        # Create custom tags for formatting
+        self.console_text.tag_config("stdout", foreground="black")
+        self.console_text.tag_config("stderr", foreground="red")
 
     def scroll_listboxes(self, *args):
         for listbox in self.listboxes:

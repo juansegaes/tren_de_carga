@@ -1,8 +1,8 @@
 Nombre,Turno,Dia de la Semana,Personas Necesarias
-Comite Manana,Manana,Lunes a Viernes,3
 Comite Tarde,Tarde,Lunes a Viernes,3
-Repricing Manana,Manana,Lunes a Viernes,1
 Repricing Tarde,Tarde,Lunes a Viernes,1
-Inmobiliaria Manana,Manana,Lunes a Viernes,1
 Inmobiliaria Tarde,Tarde,Lunes a Viernes,1
 War Room,Tarde,Viernes,2
+Comite Manana,Manana,Lunes a Viernes,3
+Repricing Manana,Manana,Lunes a Viernes,1
+Inmobiliaria Manana,Manana,Lunes a Viernes,1

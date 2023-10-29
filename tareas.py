@@ -27,7 +27,7 @@ class TaskManagement:
                 self.task_listbox.delete(0, "end")
                 for row in reader:
                     name = row[name_idx]
-                    time = "Mañana" if row[time_idx] == "Mañana" else "Tarde"
+                    time = "Manana" if row[time_idx] == "Manana" else "Tarde"
                     day = "Lunes a Viernes" if row[day_idx] == "0" else row[day_idx]
                     people_needed = row[people_needed_idx]
                     self.tasks.append([name, time, day, people_needed])
@@ -81,8 +81,8 @@ class TaskManagement:
         self.time_label = tk.Label(self.root, text="Turno (Mañana/Tarde):")
         self.time_label.pack()
 
-        self.time_combobox = ttk.Combobox(self.root, values=["Mañana", "Tarde"])
-        self.time_combobox.set("Mañana")
+        self.time_combobox = ttk.Combobox(self.root, values=["Manana", "Tarde"])
+        self.time_combobox.set("Manana")
         self.time_combobox.pack()
 
         self.day_label = tk.Label(self.root, text="Día de la Semana:")
@@ -136,7 +136,6 @@ class TaskManagement:
         # Initialize tasks
         self.tasks = []
         self.load_tasks()  # Load tasks at the beginning
-        
 
 
 if __name__ == "__main__":
